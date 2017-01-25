@@ -20,12 +20,12 @@
     //gif图片的二进制数据
     NSData *_data;
 }
-
+/*
+ //1.根据url去下载图片的二进制数据
+ //2.根据图片的类型判断如果是gif特殊处理
+ //3.如果是其他类型,直接显示
+ */
 - (void)WB_downloadIMGOrGif:(NSURL *)url {
-    //1.根据url去下载图片的二进制数据
-    //2.根据图片的类型判断如果是gif特殊处理
-    //3.如果是其他类型,直接显示
-    
     _timer = [NSTimer timerWithTimeInterval:0.12 target:self selector:@selector(updateIMG) userInfo:nil repeats:YES];
     [self downloadIMGData:url];
 }
@@ -48,12 +48,12 @@
             if ([[NSData sd_contentTypeForImageData:data] isEqualToString:@"image/gif"]) {
                 //据图片的类型判断如果是gif特殊处理
                 _data = data;
+                //将定时器加入到运行循环中
                 [[NSRunLoop currentRunLoop] addTimer:_timer forMode:NSDefaultRunLoopMode];
             } else {
                 
                 self.image = image;
             }
-
         }];
     }];
 }
@@ -63,7 +63,6 @@
     if (!data) {
         return nil;
     }
-    
     //类型转换
     CGImageSourceRef source = CGImageSourceCreateWithData((__bridge CFDataRef)data, NULL);
     //几张图片
@@ -75,7 +74,6 @@
         animatedImage = [[UIImage alloc] initWithData:data];
     }
     else {
-        
         //取出gif中的单张图片
         CGImageRef image = CGImageSourceCreateImageAtIndex(source, _currentIndex % count, NULL);
         _currentIndex ++;
@@ -84,9 +82,7 @@
         
             CGImageRelease(image);
     }
-    
     CFRelease(source);
-    
     return animatedImage;
 }
 
